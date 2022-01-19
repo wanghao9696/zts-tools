@@ -1,0 +1,86 @@
+filepath:
+  # --原始excel表的路径
+  ori: "/Users/wanghao/Desktop/中泰实习/table/process/每月简报数据表.xlsx"
+  # --生成excel表的路径
+  rel: "/Users/wanghao/Desktop/中泰实习/table/process/每月简报数据表3333.xlsx"
+
+
+date:
+  # 要
+  year: 2022
+  month: 1
+
+
+
+# 一、客户开户统计表
+table1:
+  # --客户代码开户
+  querysql1: "select count(*) from zhywpt.t_ods_t74_customer t where
+            t.open_date between '20210901' and '20210930' ;"
+
+  # --证券业务客户开户
+  querysql2: "select count(distinct a.cust_code) from zhywpt.t_ods_t74_customer a,
+            zhywpt.t_ods_t74_stk_trdacct b where b.stkbd in ('00','01','10','11') and
+            a.cust_code = b.cust_code and a.open_date  between '20210801' and '20210831' ;"
+
+
+
+# 二、客户销户统计表
+table2:
+  # --客户代码
+  querysql1: "select count(*) from zhywpt.t_ods_t74_customer t where
+            t.close_date between '20210901' and '20210930' ;"
+
+  # --沪市证券账户销户
+  querysql2: "select  zhlb,count(*) from zhywpt.djtg_zhhc_wjjx_ywls t where
+            t.ywdm = '05' and t.jgdm = '0000' and ywrq  between '20210801' and
+            '20210831' and zhlb in ('11','12') group by zhlb;"
+
+  # --深市证券代码销户
+  querysql3: "select  zhlb,count(*) from zhywpt.djtg_zhhc_wjjx_ywls t where
+            t.ywdm = '05' and t.jgdm = '0000' and ywrq  between '20210801' and
+            '20210831' and zhlb in ('21','22') group by zhlb;"
+
+
+
+# 三、客户存量统计
+table3:
+  # --客户号代码
+  querysql1: "select count(*) from zhywpt.t_ods_t74_customer t where
+            t.open_date<='20210831' and (t.close_date =0 or t.close_date >'20210831') ; "
+
+  # --一码通账户
+  querysql2: "select  count(*) from zhywpt.djtg_zhhc_wjjx_qtymt t where
+            t.khrq < '20210931' and NVL(t.xhrq,'20991231') > '20210931' ;  "
+
+
+
+table4:
+  # 1、--客户号持仓数量（分子）
+  querysql1: "select count(distinct cust_code) from
+            (select  cust_code from zhywpt.t_ods_t74_stk_trdacct where trdacct in (select dzzqzh  from ei_srcdata.sa_sjsdz_v2_cl@esim_81 t )
+            union
+            select  cust_code from zhywpt.t_ods_t74_stk_trdacct where trdacct in (select dzzqzh  from ei_srcdata.sb_sjsdz_v2_cl@esim_81 t)
+            union
+            select  cust_code from zhywpt.t_ods_t74_stk_trdacct where trdacct in (select zqzh from ei_srcdata.ha_zqye_cl@esim_81 t)
+            union
+            select  cust_code from zhywpt.t_ods_t74_stk_trdacct where trdacct in (select inv_code  from ei_srcdata.hb_bd5_cl@esim_81 t))  A;"
+
+  # 2、---客户号数量（分母，按照扣除未加挂证券账户及客户号休眠数量）
+  querysql2: "select count(distinct a.cust_code)
+            from zhywpt.t_ods_t74_customer a, zhywpt.t_ods_t74_stk_trdacct b
+            where /*b.stkbd in ('00', '01', '10', '11')
+            and */a.cust_code = b.cust_code
+            and a.open_date < '20210931'
+            and (a.cust_status != 9 or a.close_date >'20210931')
+            and  not (a.remark like '%公司休眠账户%' and a.risk_factor  like '%H%') "
+
+  # 3、客户号数量（扣除了未加挂证券账户的客户号数量）
+  querysql3: "select count(distinct a.cust_code)
+            from zhywpt.t_ods_t74_customer a, zhywpt.t_ods_t74_stk_trdacct b
+            and */a.cust_code = b.cust_code
+            and a.open_date < '20210931'
+            and (a.cust_status != 9 or a.close_date >'20210931')"
+
+# 4、---休眠客户号数量
+# 按照客户号统计的休眠数量=3-2
