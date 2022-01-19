@@ -63,8 +63,8 @@ for i in range(len(data_from_ocrale)):
 
 indexs = 'ABCD'
 indexs_2 = 'FGH'
-filename_ori = cfg_data["filepathi"]["ori"]
-filename_rel = cfg_data["filepathi"]["rel"]
+filename_ori = cfg_data["filepath"]["ori"]
+filename_rel = cfg_data["filepath"]["rel"]
 
 excel = openpyxl.load_workbook(filename_ori)
 sheet_list = excel.sheetnames
