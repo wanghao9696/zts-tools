@@ -61,7 +61,7 @@ def ocrale_process(dbcursor, order_list, data_list):
 
 
 # 打印二维list的数据
-def print_2dlist_data(list2d, str):
+def print_2dlist(list2d, str):
     print("\n", str)
     for i in range(len(list2d)):
         for j in range(len(list2d[i])):
@@ -90,7 +90,7 @@ def get_row_table(new_sheet):
                 row_table.append(i + 1)
             if '客户号数量表' in new_sheet['A'][i].value:
                 row_table.append(i + 1)
-            if '持仓投资者占比表' in new_sheet['A'][i].value:
+            if '持仓投资者占比' in new_sheet['A'][i].value:
                 row_table.append(i + 1)
 
     for i in range(len(new_sheet['E'])):
@@ -170,7 +170,7 @@ if __name__ == "__main__":
     # 数据库语句
     querysql = get_querysql(cfg_data)  # 获取sql语句
     querysql = sql_time(querysql, cur_year, cur_month)  # sql语句起止时间替换
-    print_2dlist_data(querysql, "数据库指令：")  # 打印数据库指令
+    print_2dlist(querysql, "数据库指令：")  # 打印数据库指令
 
     # 数据库数据
     data_from_ocrale = [[], [], [], []]
@@ -202,11 +202,10 @@ if __name__ == "__main__":
     data_from_ocrale[3].append(4565310)
     data_from_ocrale[3].append(6509292)
 
-    print_2dlist_data(data_from_ocrale, "数据库获取的数据：")  # 打印数据库数据
+    print_2dlist(data_from_ocrale, "数据库获取的数据：")  # 打印数据库数据
 
     update_table(new_sheet, row_table, cur_year, cur_month, data_from_ocrale)  # 更新表格数据
 
     print("done!!!!!")
 
-    # excel.save(cfg_data["filepath"]["rel"])
-    excel.save("testt.xlsx")
+    excel.save(cfg_data["filepath"]["rel"])
