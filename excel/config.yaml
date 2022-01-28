@@ -5,6 +5,13 @@ filepath:
   rel: "工作簿-test.xlsx"
 
 
+title:
+  table1: "客户开户统计表"
+  table2: "客户销户统计表"
+  table3: "累计客户号数量表"
+  table4: "期末持仓投资者占比"
+
+
 # 一、客户开户统计表
 table1:
   # --客户代码开户

@@ -49,7 +49,6 @@ def sql_time(querysql, cur_year, cur_month):
         for j in range(len(querysql[i])):
             querysql[i][j] = querysql[i][j].replace("begin_time", begin_time)
             querysql[i][j] = querysql[i][j].replace("end_time", end_time)
-            print(querysql[i][j])
 
     return querysql
 
@@ -61,12 +60,23 @@ def ocrale_process(dbcursor, order_list, data_list):
         data_list.append(data)
 
 
-# 打印数据库获取的数据
-def print_ocrale_data(data_from_ocrale):
-    for i in range(len(data_from_ocrale)):
-        print("表格" + str(i) + "的数据如下：")
-        for j in range(len(data_from_ocrale[i])):
-            print(data_from_ocrale[i][j])
+# 打印二维list的数据
+def print_2dlist_data(list2d, str):
+    print("\n", str)
+    for i in range(len(list2d)):
+        for j in range(len(list2d[i])):
+            print(list2d[i][j])
+        print("\t")
+
+
+# 获取日期
+def get_date(sheet):
+    cur_year = int(sheet.title[0:4])
+    cur_month = int(sheet.title[4:6])
+    sta_year = cur_year if cur_month >= 6 else cur_year - 1
+    sta_month = cur_month - 5 if cur_month >= 6 else (12 - 5 + cur_month)
+
+    return cur_year, cur_month, sta_year, sta_month
 
 
 # 获取每个表格的行数位置
@@ -93,7 +103,7 @@ def get_row_table(new_sheet):
 
 # m行的值复制到n行
 def copy_rows(sheet, n, m):
-    indexs = 'ABCD'
+    indexs = 'ABCD'  # 仅复制前4列
     for i in indexs:
         sheet[i + str(n)] = sheet[i + str(m)].value
 
@@ -144,47 +154,40 @@ def update_table(new_sheet, row_table, cur_year, cur_month, data_from_ocrale):
 if __name__ == "__main__":
     cfg_data = read_config()
 
-    filename_ori = cfg_data["filepath"]["ori"]
-    filename_rel = cfg_data["filepath"]["rel"]
+    excel = openpyxl.load_workbook(cfg_data["filepath"]["ori"])
+    new_sheet = excel[excel.sheetnames[-1]]
 
-    excel = openpyxl.load_workbook(filename_ori)
-    sheet_list = excel.sheetnames
-    new_sheet = excel[sheet_list[-1]]
-    new_sheet_name = excel[sheet_list[-1]].title
+    row_table = get_row_table(new_sheet)  # 获取表格所在行
+    print("5个表格所在行：", row_table, "\n")
 
-    # 获取日期
-    cur_year = int(new_sheet_name[0:4])
-    cur_month = int(new_sheet_name[4:6])
-    sta_year = cur_year if cur_month >= 6 else cur_year - 1
-    sta_month = cur_month - 5 if cur_month >= 6 else (12 - 5 + cur_month)
+    cur_year, cur_month, sta_year, sta_month = get_date(new_sheet)  # 获取日期
 
-    # 表头
+    # 表格表头名称
     title1 = "中泰证券" + str(sta_year) + "年" + str(sta_month) + "月-" + str(cur_year) + "年" + str(cur_month) + "月"
-    table_title = ["客户开户统计表", "客户销户统计表",
-                   "累计客户号数量表", "期末持仓投资者占比"]
+    table_title = [cfg_data["title"]["table1"], cfg_data["title"]["table2"],
+                   cfg_data["title"]["table3"], cfg_data["title"]["table4"]]
 
+    # 数据库语句
     querysql = get_querysql(cfg_data)  # 获取sql语句
     querysql = sql_time(querysql, cur_year, cur_month)  # sql语句起止时间替换
+    print_2dlist_data(querysql, "数据库指令：")  # 打印数据库指令
 
+    # 数据库数据
     data_from_ocrale = [[], [], [], []]
-
-    # 连接数据库并获取数据
     # dbhandle = cx_Oracle.connect('ql_read', 'ql_read', '10.29.180.151:2521/fzqsxt')
     # dbcursor = dbhandle.cursor()
 
     # threads = []
-    # t1 = threading.Thread(target=ocrale_process,args=(dbcursor, querysql[0], data_from_ocrale[0]))
-    # threads.append(t1)
-    # t2 = threading.Thread(target=ocrale_process,args=(dbcursor, querysql[1], data_from_ocrale[1]))
-    # threads.append(t2)
-    # t3 = threading.Thread(target=ocrale_process,args=(dbcursor, querysql[2], data_from_ocrale[2]))
-    # threads.append(t3)
-    # t4 = threading.Thread(target=ocrale_process,args=(dbcursor, querysql[3], data_from_ocrale[3]))
-    # threads.append(t4)
+    # threads.append(threading.Thread(target=ocrale_process,args=(dbcursor, querysql[0], data_from_ocrale[0])))
+    # threads.append(threading.Thread(target=ocrale_process,args=(dbcursor, querysql[1], data_from_ocrale[1])))
+    # threads.append(threading.Thread(target=ocrale_process,args=(dbcursor, querysql[2], data_from_ocrale[2])))
+    # threads.append(threading.Thread(target=ocrale_process,args=(dbcursor, querysql[3], data_from_ocrale[3])))
 
+    # 启动所有线程
     # for t in threads:
     #     # t.setDaemon(True)
     #     t.start()
+    # 主线程中等待所有子线程退出
     # for thread in threads:
     #     thread.join()
 
@@ -199,13 +202,11 @@ if __name__ == "__main__":
     data_from_ocrale[3].append(4565310)
     data_from_ocrale[3].append(6509292)
 
-    row_table = get_row_table(new_sheet)
-    print("5个表格的起始行数：", row_table)
+    print_2dlist_data(data_from_ocrale, "数据库获取的数据：")  # 打印数据库数据
 
-    print_ocrale_data(data_from_ocrale)  # 打印数据库获取的数据
-
-    update_table(new_sheet, row_table, cur_year, cur_month, data_from_ocrale)  # 更新
+    update_table(new_sheet, row_table, cur_year, cur_month, data_from_ocrale)  # 更新表格数据
 
     print("done!!!!!")
 
+    # excel.save(cfg_data["filepath"]["rel"])
     excel.save("testt.xlsx")
