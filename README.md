@@ -1,7 +1,7 @@
 # zts-tools
 
 <div align=center>
-![](https://github.com/wanghao9696/zts-tools/blob/main/excel/test.png width="40%")
+<img src="https://github.com/wanghao9696/zts-tools/blob/main/excel/test.png" width="40%" align=“center”>
 </div>
 
 #### 更改chart数据源指向
