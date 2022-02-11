@@ -12,6 +12,11 @@ title:
   table4: "期末持仓投资者占比"
 
 
+mark:
+  mark: ['triangle', 'circle', 'diamond']
+  color: ["FF0000", "0097FF", "6E0000"]
+
+
 # 一、客户开户统计表
 table1:
   # --客户代码开户
