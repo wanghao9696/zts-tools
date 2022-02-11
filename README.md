@@ -22,8 +22,8 @@ cat = Reference(worksheet=sheet, min_row=row_table[1]+2, max_row=row_table[1]+7,
 
 chart.ser = [] # 清空图表数据
 
-chart.add_data(data, titles_from_data=True)
-charts.set_categories(cat)
+chart.add_data(data, titles_from_data=True) # 重设数据
+charts.set_categories(cat) # 重设类别
 
 chart.ser.marker = openpyxl.chart.marker.Marker(symbol=mark[j], size=7)
 chart.ser.graphicalProperties.line.width = 30000
