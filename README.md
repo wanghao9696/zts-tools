@@ -16,7 +16,7 @@ chart = sheet._charts[0] # 读取sheet中的一个图表
 chart.ser = [] # 清空图表数据
 
 data = Reference(worksheet=sheet, min_row=2, max_row=8, min_col=2, max_col=3) # 数据源
-cat = Reference(worksheet=sheet, min_row=3, max_row=row_table8, min_col=1, max_col=1) # 类别源
+cat = Reference(worksheet=sheet, min_row=3, max_row=8, min_col=1, max_col=1) # 类别源
 
 chart.add_data(data, titles_from_data=True) # 重设数据
 chart.set_categories(cat) # 重设类别
