@@ -6,5 +6,5 @@
 ##### sheet名称list
 > excel.sheetnames
 
-##### shhet中图表的list
-> sheet._charts
+##### sheet中图表的list
+‘’‘sheet._charts’‘’
