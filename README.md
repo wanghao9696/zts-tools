@@ -1,6 +1,6 @@
 # zts-tools
 
-![示例](https://github.com/wanghao9696/zts-tools/blob/main/excel/test.png  width="20%")
+<img src="https://github.com/wanghao9696/zts-tools/blob/main/excel/test.png"   width="40%">
 
 #### 更改chart数据源指向
 ```
