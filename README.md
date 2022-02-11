@@ -1,6 +1,6 @@
 # zts-tools
 
-![cmd-markdown-logo](https://github.com/wanghao9696/zts-tools/blob/main/excel/test.png)
+<img src="https://github.com/wanghao9696/zts-tools/blob/main/excel/test.png"   width="20%">
 
 #### 更改chart数据源指向
 ```
